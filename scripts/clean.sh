@@ -2,6 +2,13 @@
 
 VBOX_VERSION=$(cat /home/vagrant/.vbox_version)
 
+# Remove packages used for building the VirtualBox Guest Additions
+yum remove -y kernel-headers kernel-devel gcc perl cloog-ppl cpp glibc-devel glibc-headers mpfr ppl
+
+# Remove VirtualBox Guest Additions sources
+rm -f /usr/src/vboxguest-${VBOX_VERSION}
+rm -rf /opt/VBoxGuestAdditions-${VBOX_VERSION}/src
+
 # Remove yum caches
 yum clean all
 
@@ -15,7 +22,7 @@ rm -rf /tmp/*
 rm -f /var/log/wtmp /var/log/btmp
 
 # Clear logs
-LOG_FILES=("cron" "dmesg" "dmesg.old" "dracut.log" "lastlog" "secure" "messages" "maillog") 
+LOG_FILES=("cron" "dmesg" "dmesg.old" "dracut.log" "lastlog" "secure" "messages" "maillog")
 for log_file in "${array[@]}"
 do
   rm -f /var/log/${log_file}
