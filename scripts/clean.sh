@@ -9,6 +9,9 @@ yum remove -y kernel-headers kernel-devel gcc perl cloog-ppl cpp glibc-devel gli
 rm -f /usr/src/vboxguest-${VBOX_VERSION}
 rm -rf /opt/VBoxGuestAdditions-${VBOX_VERSION}/src
 
+# Remove old kernels
+rpm -qa kernel | grep -v -e "^kernel-$(uname -r)" | xargs yum remove -y
+
 # Remove yum caches
 yum clean all
 
