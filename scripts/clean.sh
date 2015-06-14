@@ -40,9 +40,6 @@ sed -i "s/NM_CONTROLLED=yes)/NM_CONTROLLED=no/g" /etc/sysconfig/network-scripts/
 # Clear resolv.conf
 > /etc/resolv.conf
 
-# Fix slow DNS (https://www.netroby.com/view.php?id=3695)
-echo 'RES_OPTIONS="single-request-reopen"' >> /etc/sysconfig/network
-
 # Clear auto-generated SSH keys
 rm -f /etc/ssh/*key*
 
