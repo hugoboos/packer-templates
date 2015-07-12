@@ -1,0 +1,15 @@
+/var/log/messages
+/var/log/secure
+/var/log/maillog
+/var/log/cron
+/var/log/spooler
+/var/log/kern.log
+/var/log/boot.log
+/var/log/syslog
+/var/log/unused.log
+{
+  sharedscripts
+  postrotate
+    /bin/kill -HUP `cat /var/run/syslogd.pid 2> /dev/null` 2> /dev/null || true
+  endscript
+}

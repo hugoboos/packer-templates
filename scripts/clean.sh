@@ -9,6 +9,14 @@ yum remove -y kernel-headers kernel-devel gcc perl cloog-ppl cpp glibc-devel gli
 rm -f /usr/src/vboxguest-${VBOX_VERSION}
 rm -rf /opt/VBoxGuestAdditions-${VBOX_VERSION}/src
 
+# Remove Puppet 4
+yum remove -y puppet-agent puppetlabs-release-pc1 dmidecode
+rm -rf /etc/puppetlabs
+rm -rf /opt/puppetlabs
+rm -rf /var/cache/yum/x86_64/6/puppetlabs-pc1
+rm -rf /var/lib/yum/repos/x86_64/6/puppetlabs-pc1
+semodule -r puppet
+
 # Remove old kernels
 rpm -qa kernel | grep -v -e "^kernel-$(uname -r)" | xargs yum remove -y
 

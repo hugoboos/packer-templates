@@ -41,7 +41,20 @@
       "type": "shell",
       "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
       "scripts": [
-        "scripts/install-vbox-guest-additions.sh",
+        "scripts/install-vbox-guest-additions.sh"
+      ]
+    },
+    {
+      "type": "puppet-masterless",
+      "manifest_file": "puppet/environments/packer/manifests/default.pp",
+      "manifest_dir": "puppet/environments",
+      "module_paths": ["puppet/modules"],
+      "execute_command": "{{.FacterVars}} sudo /opt/puppetlabs/bin/puppet apply --detailed-exitcodes --modulepath='{{.ModulePath}}' {{.ManifestFile}}"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "scripts": [
         "scripts/remove-unnecessary-locales.sh",
         "scripts/clean.sh",
         "scripts/compact.sh"
