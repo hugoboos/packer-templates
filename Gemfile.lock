@@ -1,0 +1,17 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    puppet-lint (1.1.0)
+    rainbow (2.0.0)
+    rake (10.4.2)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  puppet-lint
+  rainbow
+  rake
+
+BUNDLED WITH
+   1.10.5
