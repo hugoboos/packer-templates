@@ -1,5 +1,7 @@
 # Packer templates
 
+[![Build Status](https://travis-ci.org/hugoboos/packer-templates.svg?branch=master)](https://travis-ci.org/hugoboos/packer-templates)
+
 Packer templates for building Vagrant base boxes.
 
 ## CentOS 6.6
