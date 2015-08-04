@@ -6,7 +6,6 @@ before_install:
   - unzip packer_0.8.2_linux_amd64.zip -d bin
   - PATH=$(pwd)/bin:$PATH
 env:
-  - PUPPET_VERSION="~> 3.8.1"
   - PUPPET_VERSION="~> 4.0.0"
   - PUPPET_VERSION="~> 4.1.0"
   - PUPPET_VERSION="~> 4.2.1"
