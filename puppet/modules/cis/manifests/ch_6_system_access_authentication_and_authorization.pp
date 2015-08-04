@@ -2,6 +2,17 @@
 #
 class cis::ch_6_system_access_authentication_and_authorization {
 
+  # 6.1.1 Enable anacron Daemon (Scored)
+  package { 'cronie-anacron':
+    ensure => present,
+  }
+
+  # 6.1.2 Enable crond Daemon (Scored)
+  service { 'crond':
+    ensure => running,
+    enable => true,
+  }
+
   # 6.1.3 Set User/Group Owner and Permission on /etc/anacrontab (Scored)
   # 6.1.4 Set User/Group Owner and Permission on /etc/crontab (Scored)
   file { ['/etc/crontab', '/etc/anacrontab']:
@@ -77,6 +88,15 @@ class cis::ch_6_system_access_authentication_and_authorization {
       'set ClientAliveCountMax 0', # 6.2.12
       'set Banner /etc/issue.net', # 6.2.14
     ],
+  }
+
+  # 6.2.13 Limit Access via SSH (Scored)
+  # [Not implemented]
+
+  # 6.3.1 Upgrade Password Hashing Algorithm to SHA-512 (Scored)
+  exec { 'cis_6_3_1':
+    command => '/usr/sbin/authconfig --passalgo=sha512 --update',
+    onlyif  => '/usr/sbin/authconfig --test | /bin/grep hashing | /bin/grep -v sha512',
   }
 
   # 6.3.2 Set Password Creation Requirement Parameters Using pam_cracklib (Scored)

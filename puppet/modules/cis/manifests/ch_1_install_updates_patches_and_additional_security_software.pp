@@ -2,6 +2,22 @@
 #
 class cis::ch_1_install_updates_patches_and_additional_security_software {
 
+  # 1.1.1 Create Separate Partition for /tmp (Scored)
+  # 1.1.2 Set nodev option for /tmp Partition (Scored)
+  # 1.1.3 Set nosuid option for /tmp Partition (Scored)
+  # 1.1.4 Set noexec option for /tmp Partition (Scored)
+  mount { '/tmp':
+    ensure  => mounted,
+    options => 'nodev,nosuid,noexec',
+    pass    => 2,
+  }
+
+  # 1.1.5 Create Separate Partition for /var (Scored)
+  mount { '/var':
+    ensure => mounted,
+    pass   => 1,
+  }
+
   # 1.1.6 Bind Mount the /var/tmp directory to /tmp (Scored)
   mount { '/var/tmp':
     ensure  => mounted,
@@ -9,6 +25,31 @@ class cis::ch_1_install_updates_patches_and_additional_security_software {
     fstype  => 'none',
     options => 'bind',
   }
+
+  # 1.1.7 Create Separate Partition for /var/log (Scored)
+  mount { '/var/log':
+    ensure => mounted,
+    pass   => 2,
+  }
+
+  # 1.1.8 Create Separate Partition for /var/log/audit (Scored)
+  mount { '/var/log/audit':
+    ensure => mounted,
+    pass   => 2,
+  }
+
+  # 1.1.9 Create Separate Partition for /home (Scored)
+  # 1.1.10 Add nodev Option to /home (Scored)
+  mount { '/home':
+    ensure  => mounted,
+    options => 'nodev',
+    pass    => 1,
+  }
+
+  # 1.1.11 Add nodev Option to Removable Media Partitions (Not Scored)
+  # 1.1.12 Add noexec Option to Removable Media Partitions (Not Scored)
+  # 1.1.13 Add nosuid Option to Removable Media Partitions (Not Scored)
+  # [No removable media is installed]
 
   # 1.1.14 Add nodev Option to /dev/shm Partition (Scored)
   # 1.1.15 Add nosuid Option to /dev/shm Partition (Scored)
@@ -44,15 +85,79 @@ class cis::ch_1_install_updates_patches_and_additional_security_software {
     source => 'puppet:///modules/cis/etc/modprobe.d/cis.conf',
   }
 
+  # 1.2.1 Verify CentOS GPG Key is Installed (Scored)
+  package { 'gpg-pubkey':
+    ensure => present,
+  }
+
+  # 1.2.2 Verify that gpgcheck is Globally Activated (Scored)
+  augeas { 'cis_1_2_2':
+    context => '/files/etc/yum.conf',
+    changes => 'set main/gpgcheck 1',
+  }
+
+  # 1.2.3 Obtain Software Package Updates with yum (Not Scored)
+  # [Updates are installed during installation. See kickstart script.]
+
+  # 1.2.4 Verify Package Integrity Using RPM (Not Scored)
+  # [Not implemented]
+
   # 1.3.1 Install AIDE (Scored)
   package { 'aide':
     ensure => present,
   }
 
+  # 1.3.2 Implement Periodic Execution of File Integrity (Scored)
+  # [Not implemented]
+
+  # 1.4.1 Enable SELinux in /etc/grub.conf (Scored)
+  augeas { 'cis_1_4_1':
+    context => '/files/boot/grub/grub.conf',
+    changes => [
+      'setm title kernel/selinux 1',
+      'setm title kernel/enforcing 1',
+    ],
+  }
+
+  # 1.4.2 Set the SELinux State (Scored)
+  # 1.4.3 Set the SELinux Policy (Scored)
+  augeas { 'cis_1_4_2':
+    context => '/files/etc/selinux/config',
+    changes => [
+      'set SELINUX enforcing', # 1.4.2
+      'set SELINUXTYPE targeted', # 1.4.3
+    ],
+  }
+
+  # 1.4.4 Remove SETroubleshoot (Scored)
+  # 1.4.5 Remove MCS Translation Service (mcstrans) (Scored)
+  package { ['setroubleshoot', 'mcstrans']:
+    ensure => absent,
+  }
+
+  # 1.4.6 Check for Unconfined Daemons (Scored)
+  # [Not implemented]
+
+  # 1.5.1 Set User/Group Owner on /etc/grub.conf (Scored)
+  # 1.5.2 Set Permissions on /etc/grub.conf (Scored)
+  file { '/boot/grub/grub.conf':
+    ensure => file,
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0600',
+  }
+
+  # 1.5.3 Set Boot Loader Password (Scored)
+  # [Set during installation. See kickstart script.]
+
+  # 1.5.4 Require Authentication for Single-User Mode (Scored)
   # 1.5.5 Disable Interactive Boot (Scored)
   augeas { 'cis_1_5_5':
     context => '/files/etc/sysconfig/init',
-    changes => 'set PROMPT no',
+    changes => [
+      'set SINGLE /sbin/sulogin',
+      'set PROMPT no',
+    ],
   }
 
   # 1.6.1 Restrict Core Dumps (Scored)
@@ -79,4 +184,7 @@ class cis::ch_1_install_updates_patches_and_additional_security_software {
       'set kernel.randomize_va_space 2', # 1.6.3
     ],
   }
+
+  # 1.7 Use the Latest OS Release (Not Scored)
+  # [Using the latest OS]
 }

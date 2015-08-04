@@ -40,6 +40,9 @@ class cis::ch_4_network_configuration_and_firewalls {
     ],
   }
 
+  # 4.3.1 Deactivate Wireless Interfaces (Not Scored)
+  # [No wireless interfaces]
+
   # 4.4.2 Disable IPv6 (Not Scored)
   augeas { 'cis_4.4.2':
     context => '/files/etc/sysconfig/network',
@@ -56,6 +59,12 @@ class cis::ch_4_network_configuration_and_firewalls {
     group  => 'root',
     mode   => '0600',
     source => 'puppet:///modules/cis/etc/modprobe.d/ipv6.conf',
+  }
+
+  # 4.4.2 Disable IPv6 (Not Scored)
+  service { 'ip6tables':
+    ensure => stopped,
+    enable => false,
   }
 
   # 4.5.1 Install TCP Wrappers (Not Scored)
@@ -89,4 +98,13 @@ class cis::ch_4_network_configuration_and_firewalls {
   # 4.6.4 Disable TIPC (Not Scored)
   # [Done in cis::ch_1_install_updates_patches_and_additional_security_software]
   # [See resource '/etc/modprobe.d/cis.conf']
+
+  # 4.7 Enable IPtables (Scored)
+  service { 'iptables':
+    ensure => running,
+    enable => true,
+  }
+
+  # 4.8 Enable IP6tables (Not Scored)
+  # [IPv6 is disabled]
 }

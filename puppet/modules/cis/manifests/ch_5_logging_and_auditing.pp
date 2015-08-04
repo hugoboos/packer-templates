@@ -2,6 +2,23 @@
 #
 class cis::ch_5_logging_and_auditing {
 
+  # 5.1.1 Install the rsyslog package (Scored)
+  package { 'rsyslog':
+    ensure => present,
+  }
+
+  # 5.1.2 Activate the rsyslog Service (Scored)
+  service { 'syslog':
+    ensure => stopped,
+    enable => false,
+  }
+
+  # 5.1.2 Activate the rsyslog Service (Scored)
+  service { 'rsyslog':
+    ensure => running,
+    enable => true,
+  }
+
   # 5.1.3 Configure /etc/rsyslog.conf (Not Scored)
   augeas { 'cis_5_1_3':
     context => '/files/etc/rsyslog.conf',
@@ -66,6 +83,9 @@ class cis::ch_5_logging_and_auditing {
   # 5.1.5 Configure rsyslog to Send Logs to a Remote Log Host (Scored)
   # [Not implemented]
 
+  # 5.1.6 Accept Remote rsyslog Messages Only on Designated Log Hosts (Not Scored)
+  # [Not implemented. This is not a log host.]
+
   # 5.2.1.1 Configure Audit Log Storage Size (Not Scored)
   # 5.2.1.2 Disable System on Audit Log Full (Not Scored)
   # 5.2.1.3 Keep All Auditing Information (Scored)
@@ -78,6 +98,18 @@ class cis::ch_5_logging_and_auditing {
       'set admin_space_left_action halt', # 5.2.1.2
       'set max_log_file_action keep_logs', # 5.2.1.3
     ],
+  }
+
+  # 5.2.2 Enable auditd Service (Scored)
+  service { 'auditd':
+    ensure => running,
+    enable => true,
+  }
+
+  # 5.2.3 Enable Auditing for Processes That Start Prior to auditd (Scored)
+  augeas { 'cis_5_2_3':
+    context => '/files/boot/grub/grub.conf',
+    changes => 'setm title kernel/audit 1',
   }
 
   # 5.2.4 Record Events That Modify Date and Time Information (Scored)
