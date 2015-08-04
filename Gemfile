@@ -1,7 +1,9 @@
 source ENV['GEM_SOURCE'] || 'https://rubygems.org'
 
 group :development do
-  gem 'rake',         :require => false
-  gem 'rainbow',      :require => false
-  gem 'puppet-lint',  :require => false
+  gem 'rake'
+  gem 'rainbow'
+  gem 'puppet', ENV['PUPPET_VERSION'] || '~> 4.2.1'
+  gem 'puppet-lint'
+  gem 'puppet-syntax'
 end

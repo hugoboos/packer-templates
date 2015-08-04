@@ -1,7 +1,10 @@
 require 'rainbow'
 require 'puppet-lint/tasks/puppet-lint'
+require 'puppet-syntax/tasks/puppet-syntax'
 
-task :default => ['packer:validate', 'puppet:lint']
+Rake::Task[:lint].clear
+
+task :default => ['packer:validate', 'puppet:syntax', 'puppet:lint']
 
 namespace :packer do
   desc 'Validate the packer templates'
@@ -16,7 +19,13 @@ namespace :packer do
 end
 
 namespace :puppet do
-  Rake::Task[:lint].clear
+  desc 'Check the Puppet syntax'
+  task :syntax  do
+    Dir.chdir 'puppet'
+    Rake::Task[:syntax].invoke
+    Dir.chdir '..'
+  end
+
   PuppetLint::RakeTask.new :lint do |config|
     config.pattern = 'puppet/**/*.pp'
     config.fail_on_warnings = true
