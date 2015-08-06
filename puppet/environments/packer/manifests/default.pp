@@ -1,1 +1,2 @@
 include ::cis
+include ::vagrant
