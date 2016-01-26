@@ -1,0 +1,73 @@
+{
+  "builders": [
+    {
+      "type": "virtualbox-iso",
+      "iso_url": "http://ftp.tudelft.nl/centos.org/6.7/isos/i386/CentOS-6.7-i386-minimal.iso",
+      "iso_checksum": "fc4bfb9f94668e4d0fa14b3108de1fdc8b6d2096a95e6c2b14f595f1bad57bbf",
+      "iso_checksum_type": "sha256",
+
+      "vm_name": "centos-6.7-i686",
+      "guest_os_type": "RedHat",
+      "disk_size": 40960,
+      "hard_drive_interface": "sata",
+
+      "boot_wait": "5s",
+      "boot_command": ["<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/centos-6.7-i686.cfg<enter><wait>"],
+      "shutdown_command": "echo 'vagrant' | sudo -S shutdown -P now",
+
+      "http_directory":  "http",
+      "output_directory": "build/centos-6.7-i686",
+
+      "ssh_username": "vagrant",
+      "ssh_password": "vagrant",
+      "ssh_wait_timeout": "20m",
+
+      "virtualbox_version_file": ".vbox_version",
+      "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+
+      "vboxmanage": [
+        ["modifyvm", "{{.Name}}", "--memory", "480"],
+        ["modifyvm", "{{.Name}}", "--cpus", "1"],
+        ["modifyvm", "{{.Name}}", "--nic1", "nat"],
+        ["modifyvm", "{{.Name}}", "--nictype1", "virtio"],
+        ["modifyvm", "{{.Name}}", "--audio", "none"],
+        ["modifyvm", "{{.Name}}", "--usb", "off"]
+      ]
+    }
+  ],
+
+  "provisioners": [
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "scripts": [
+        "scripts/install-vbox-guest-additions.sh"
+      ]
+    },
+    {
+      "type": "puppet-masterless",
+      "manifest_file": "puppet/environments/packer/manifests/default.pp",
+      "manifest_dir": "puppet/environments",
+      "module_paths": ["puppet/modules"],
+      "execute_command": "{{.FacterVars}} sudo /opt/puppetlabs/bin/puppet apply --detailed-exitcodes --modulepath='{{.ModulePath}}' {{.ManifestFile}}"
+    },
+    {
+      "type": "shell",
+      "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'",
+      "scripts": [
+        "scripts/remove-unnecessary-locales.sh",
+        "scripts/clean.sh",
+        "scripts/compact.sh"
+      ]
+    }
+  ],
+
+  "post-processors": [
+    {
+      "type": "vagrant",
+      "output": "build/centos-6.7-i686.box",
+      "keep_input_artifact": true,
+      "compression_level": 9
+    }
+  ]
+}
